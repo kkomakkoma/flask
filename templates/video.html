@@ -14,7 +14,7 @@
 
 <div id='detect' style='margin:auto;'>
 <video width='640' height='480' autoplay>
-				<source src="{{ url_for('static', filename='uploads/' ~ '[Detection]' ~ request.args.get('filename')) }}" type='video/mp4'>
+				<source src="{{ url_for('static', filename='uploads/' ~ 'Detection_' ~ request.args.get('filename')) }}" type='video/mp4'>
 				Your browser does not support the Video.
 </video>
 <p id='caption'>Face Detection Video</p>

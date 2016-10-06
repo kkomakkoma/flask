@@ -1,5 +1,16 @@
 {% extends 'layout.html' %}
 {% block body %}
 <h1>Image Uploaded Successfully</h1>
-Image File Uploaded
+
+<div id='source'>
+				<img src="{{ url_for('static', filename='uploads/' ~ request.args.get('filename')) }}" />
+				<p>Image File Uploaded</p>
+</div>
+
+<div id='detect'>
+				<img src="{{ url_for('static', filename='uploads/' ~ 'Detection_' ~ request.args.get('filename')) }}" />
+				<p>Detection Image</p>
+</div>
+
+
 {% endblock %}

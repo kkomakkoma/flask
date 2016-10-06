@@ -1,5 +1,15 @@
 {% extends 'layout.html' %}
+
 {% block body %}
+
 <h1>Video Uploaded Successfully</h1>
-Video File Uploaded
+
+<div id='detect' style='margin:auto;'>
+<video width='640' height='480' autoplay>
+				<source src="/var/www/flask/static/uploads/Detection_GFRIEND_-_NAVILLERA_-_-_Music_Bank_HOT_Stage_-_2016.07.29_-_from_YouTube.mp4" type='video/mp4'>
+				Your browser does not support the Video.
+</video>
+<p id='caption'>Face Detection Video</p>
+</div>
+
 {% endblock %}
