@@ -3,8 +3,8 @@ import os
 from flask import Flask, url_for, render_template, request, redirect, Response
 from werkzeug import secure_filename
 
-UPLOAD_PATH='/var/www/flask/uploads'
-ALLOWED_EXTENSIONS=set(['txt','pdf','png','jpg','jpeg','gif','mp4','avi','mpeg'])
+UPLOAD_PATH='/var/www/flask/static/uploads'
+ALLOWED_EXTENSIONS=set(['txt','pdf','png','jpg','jpeg','gif','mp4'])
 app = Flask(__name__)
 app.config['UPLOAD_PATH'] = UPLOAD_PATH
 app.config['MAX_CONTENT_LENGTH'] = 2 * 1024 * 1024 * 1024
@@ -33,6 +33,10 @@ def uploaded():
 @app.route('/')
 def index():
     return render_template('upload.html')
+
+@app.route('/test')
+def test():
+    return render_template('test.html')
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0')
