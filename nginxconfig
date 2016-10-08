@@ -1,0 +1,35 @@
+upstream uwsgicluster {
+  server unix:///var/www/flask/uwsgi.sock;
+  # server 127.0.0.1
+}
+
+#server {
+#  listen 80;
+#  server_name _;
+#  rewrite ^ https://$http_host$request_uri? permanent;
+#}
+
+server {
+  #listen 443;
+  listen 80;
+	server_name _;
+  #ssl on;
+  #ssl_certificate /home/ubuntu/ssl/cacert.pem;
+  #ssl_certificate_key /home/ubuntu/ssl/privkey.pem;
+  access_log /var/log/uwsgi/access_log;
+
+  location / {
+    root /var/www/flask;
+    uwsgi_pass uwsgicluster;
+    include uwsgi_params;
+    uwsgi_param UWSGI_SCRIPT app.py;
+  }
+
+  location /static {
+    alias /var/www/flask/static;
+
+    if (!-f $request_filename) {
+      uwsgi_pass uwsgicluster;
+    }
+  }
+}

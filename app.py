@@ -6,6 +6,8 @@ from werkzeug import secure_filename
 import infofile
 info = infofile.InfoFile()
 
+
+from stream import VideoStream
 import detection
 
 ALLOWED_EXTENSIONS=set(['txt','pdf','png','jpg','jpeg','gif','mp4'])
@@ -37,8 +39,9 @@ def uploaded():
                 detection.detectionImage(infofile.UPLOAD_PATH, filefullname)
 		return render_template('image.html')
 	elif ext in ('mp4'):
-                detection.detectionVideo(infofile.UPLOAD_PATH, filefullname)
-		return render_template('video.html')
+                #detection.detectionVideo(infofile.UPLOAD_PATH, filefullname)
+		#return render_template('video.html')
+                return Response(gen(VideoStream()), mimetype='multipart/x-mixed-replace; boundary=frame')
 	else:
 		return render_template('error.html')
 
@@ -49,6 +52,12 @@ def index():
 @app.route('/test')
 def test():
     return render_template('test.html')
+
+def gen(stream):
+    while True:
+        frame = stream.get_frame()
+        yield (b'--frame\r\n'
+                b'Content-Type: image/jpeg\r\n\r\n' + frame + b'\r\n\r\n')
 
 
 if __name__ == '__main__':
