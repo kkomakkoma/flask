@@ -33,24 +33,37 @@ def detectionVideo(uploadpath, filename):
     outputpath = uploadpath + '/Detection_' + filename + '.avi'
     renamepath = uploadpath + '/Detection_' + filename
 
-    cap = cv2.VideoCapture(sourcepath)
+    #cap = cv2.VideoCapture(sourcepath)
+
+    img1 = cv2.imread(uploadpath + '/' + 'Jongwon.jpg')
+    img2 = cv2.imread(uploadpath + '/' + 'cover.jpg')
+    img3 = cv2.imread(uploadpath + '/' + 'Detection_cover.jpg')
+    img4 = cv2.imread(uploadpath + '/' + 'Detection_Jongwon.jpg')
     
     # Define Codec
-    # fourcc = cv2.VideoWriter_fourcc(*'XVID')
-    # out = cv2.VideoWriter(outputpath, fourcc, 20.0, (640, 480))
-    out = cv2.VideoWriter(outputpath, -1, 20.0, (640, 480))
+    fourcc = cv2.VideoWriter_fourcc(*'FMP4')
+    out = cv2.VideoWriter(outputpath, fourcc, 1, (640, 480))
+    #out = cv2.VideoWriter(outputpath, -1, 1, (640, 480))
 
-    while(cap.isOpened()):
-        ret, frame = cap.read()
 
-        gray = cv2.flip(frame, 0)
+    out.write(img1)
+    out.write(img2)
+    out.write(img3)
+    out.write(img4)
 
-        if ret == True:
-            out.write(gray)
-        else:
-            break
+    #while(cap.isOpened()):
+    #    ret, frame = cap.read()
+
+     #   gray = cv2.flip(frame, 0)
+
+      #  if ret == True:
+       #     out.write(gray)
+        #else:
+         #   break
     
-    cap.release()
+    
+
+    #cap.release()
     out.release()
     cv2.destroyAllWindows()
 

@@ -1,0 +1,102 @@
+#include <Python.h>
+
+#include <iostream>									// for standard I/O
+#include <string>										// for strings
+
+#include <stdio.h>									// rename
+
+#include <opencv2/core.hpp>					// Basic OpenCV structure
+#include <opencv2/videoio.hpp> 			// Video Write
+//#include <opencv2/highgui.hpp>		// Window
+
+
+using namespace std;
+using namespace cv;
+
+static PyObject *
+detectionC_detectionVideo(PyObject *self, PyObject *args)
+{
+				const char *uploadpath;
+				const char *filename;
+
+				if(!PyArg_ParseTuple(args, "ss", &uploadpath, &filename))
+								return NULL;
+	
+
+				const string sourcepath = string(uploadpath) + "/" + string(filename);
+				const string renamepath = string(uploadpath) + "/Detection_" + string(filename);
+				const string outputpath = renamepath + ".avi";
+				
+				const bool askOutputType = true;
+
+				VideoCapture cap(sourcepath);		// Open Input
+				if (!cap.isOpened()){
+								cout << "Could Not open the input video: " << sourcepath << endl;
+				}
+
+				int ex = static_cast<int>(cap.get(CAP_PROP_FOURCC));	// Get Codec
+
+				char EXT[] = {(char)(ex & 0xFF) , (char)((ex & 0xFF00) >> 8), (char)((ex & 0xFF0000) >> 16), (char)((ex & 0xFF000000) >> 24), 0};
+
+				Size S = Size((int) cap.get(CAP_PROP_FRAME_WIDTH),	// Acquire input size
+												(int) cap.get(CAP_PROP_FRAME_HEIGHT));
+
+				VideoWriter outputVideo;				// Open Output
+				if(askOutputType)
+								outputVideo.open(outputpath, ex=-1, cap.get(CAP_PROP_FPS), S, true);
+				else
+								outputVideo.open(outputpath, ex, cap.get(CAP_PROP_FPS), S, true);
+
+
+				if (!outputVideo.isOpened()){
+								cout << "Could not open the output video for write: " << sourcepath << endl;
+				}
+
+				// Frame Resolution
+				cout << "Input frame resolution : Width=" << S.width << " Height=" << S.height << "of nr#: " << cap.get(CAP_PROP_FRAME_COUNT) << endl;
+				cout << "Input codec type: " << EXT << endl;
+
+				// Red channel to save
+				int channel = 2; 
+
+				Mat src, res;
+				vector<Mat> spl;
+
+				for (;;){
+								cap >> src;
+								if(src.empty()) break;
+
+								split(src, spl);
+
+								for(int i=0; i<3; ++i)
+												if(i != channel)
+																spl[i] = Mat::zeros(S, spl[0].type());
+								
+								merge(spl, res);
+
+								// outputVideo.write(res);
+								outputVideo << res;
+				}
+
+				cout << "Finished writing" << endl;
+
+				if ( -1 == rename(outputpath.c_str(), renamepath.c_str()))
+								cout << "error rename!!" << endl;
+
+				cout << "Rename " << outputpath << " to " << renamepath << endl;
+
+				return Py_BuildValue("s", sourcepath.c_str());
+}
+
+static PyMethodDef DetectionMethods[] = {
+				{"detectionVideo", detectionC_detectionVideo, METH_VARARGS,
+							"Detection Video"},
+				{NULL, NULL, 0, NULL}					// end of array
+};
+
+PyMODINIT_FUNC
+initdetectionC(void){
+				(void) Py_InitModule("detectionC",DetectionMethods);
+}
+
+
