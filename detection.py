@@ -24,7 +24,7 @@ def detectionImage(uploadpath, filename):
         # for(ex, ey, ew, eh) in eyes:
         #    cv2.rectangle(roi_color, (ex, ey), (ex+ew, ey+eh),(0,255,0), 2)
 
-    cv2.imwrite(outputpath, img)
+    cv2.imwrite(outputpath, gray)
 
     cv2.destroyAllWindows()
 
