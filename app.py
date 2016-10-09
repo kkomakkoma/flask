@@ -1,18 +1,23 @@
 # -*- coding: UTF-8 -*-
 import os
+
+# flask import
 from flask import Flask, url_for, render_template, request, redirect, Response
 from werkzeug import secure_filename
 
-import infofile
-info = infofile.InfoFile()
+# filename class
+from infofile import InfoFile
 
-
+# opencv class
 from stream import VideoStream
+
+# opencv image
 import detection
 
+UPLOAD_PATH='/var/www/flask/static/uploads'
 ALLOWED_EXTENSIONS=set(['txt','pdf','png','jpg','jpeg','gif','mp4'])
 app = Flask(__name__)
-app.config['UPLOAD_PATH'] = infofile.UPLOAD_PATH
+app.config['UPLOAD_PATH'] = UPLOAD_PATH
 app.config['MAX_CONTENT_LENGTH'] = 2 * 1024 * 1024 * 1024
 
 def allowed_file(filename):
@@ -20,28 +25,32 @@ def allowed_file(filename):
 
 @app.route('/uploaded', methods=['GET','POST'])
 def uploaded():
+        # class globalization
+        global info
+
 	if request.method == 'POST':
 		file = request.files['file']
 		if file and allowed_file(file.filename):
 			filename = secure_filename(file.filename)
+                        
                         # file name into class
-                        info.setfilepath(file.filename)
-			file.save(os.path.join(app.config['UPLOAD_PATH'], filename))
+                        info = InfoFile(UPLOAD_PATH, file.filename)
+			
+                        file.save(os.path.join(app.config['UPLOAD_PATH'], filename))
 			return redirect(url_for('uploaded', filename=filename))
         
-        #info.setfilepath(request.args.get('filename'))
+        #info = InfoFile(UPLOAD_PATH, request.args.get('filename'))
 	filefullpath = info.getfilefullpath()
         filefullname = info.getfilefullname()
         ext = info.getfileext()
 
 
 	if ext in ('png','jpg','jpeg','gif'):
-                detection.detectionImage(infofile.UPLOAD_PATH, filefullname)
+                detection.detectionImage(UPLOAD_PATH, filefullname)
 		return render_template('image.html')
 	elif ext in ('mp4'):
-                #detection.detectionVideo(infofile.UPLOAD_PATH, filefullname)
-		#return render_template('video.html')
-                return Response(gen(VideoStream()), mimetype='multipart/x-mixed-replace; boundary=frame')
+	        #return render_template('video.html')
+                return Response(gen(VideoStream(info.getfilefullpath())), mimetype='multipart/x-mixed-replace; boundary=frame')
 	else:
 		return render_template('error.html')
 
@@ -53,6 +62,7 @@ def index():
 def test():
     return render_template('test.html')
 
+# Video Streaming
 def gen(stream):
     while True:
         frame = stream.get_frame()

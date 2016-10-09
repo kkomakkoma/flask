@@ -28,34 +28,3 @@ def detectionImage(uploadpath, filename):
 
     cv2.destroyAllWindows()
 
-def detectionVideo(uploadpath, filename):
-    sourcepath = uploadpath + '/' + filename
-    outputpath = uploadpath + '/Detection_' + filename + '.avi'
-    renamepath = uploadpath + '/Detection_' + filename
-
-    cap = cv2.VideoCapture(sourcepath)
-
-    # Define Codec
-    fourcc = cv2.VideoWriter_fourcc(*'FMP4')
-    out = cv2.VideoWriter(outputpath, fourcc, 20, (640, 480))
-    #out = cv2.VideoWriter(outputpath, -1, 1, (640, 480))
-
-
-    while(cap.isOpened()):
-        ret, frame = cap.read()
-
-        gray = cv2.flip(frame, 0)
-
-        if ret == True:
-            out.write(gray)
-        else:
-            break
-    
-    
-
-    cap.release()
-    out.release()
-    cv2.destroyAllWindows()
-    
-    if (os.path.exists(outputpath)):
-        os.rename(outputpath, renamepath)

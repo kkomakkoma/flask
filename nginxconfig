@@ -17,6 +17,8 @@ server {
   #ssl_certificate /home/ubuntu/ssl/cacert.pem;
   #ssl_certificate_key /home/ubuntu/ssl/privkey.pem;
   access_log /var/log/uwsgi/access_log;
+	client_max_body_size 2G;
+	
 
   location / {
     root /var/www/flask;

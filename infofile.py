@@ -1,15 +1,12 @@
 # -*- coding: UTF-8 -*-
-UPLOAD_PATH = '/var/www/flask/static/uploads'
 
-class InfoFile:
-    filefullpath = '' 
-    ext = ''
-    filepurename = ''
-    filename = ''
-
-    def setfilepath(self, filename):
-        self.filefullpath = UPLOAD_PATH + '/' + filename
+class InfoFile(object):
+    def __init__(self, upload_path, filename):
+        self.filefullpath = upload_path + '/' + filename
         self.filename = filename
+        self.ext = ''
+        self.filepurename = ''
+
 
     def getfilefullpath(self):
         return self.filefullpath
